@@ -5,7 +5,11 @@
 	<artifactId>jdto-examples</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>jDTO - Examples</name>
-
+	<parent>
+		<groupId>org.charpy.jdto</groupId>
+		<artifactId>jdto</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 	<dependencies>
 		<dependency>
 			<groupId>org.charpy.jdto</groupId>
