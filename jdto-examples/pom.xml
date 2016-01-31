@@ -1,16 +1,51 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.charpy.jdto</groupId>
 	<artifactId>jdto-examples</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>jDTO - Examples</name>
 	<parent>
 		<groupId>org.charpy.jdto</groupId>
 		<artifactId>jdto</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.charpy.jdto</groupId>
+				<artifactId>jdto-maven-plugin</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<configuration>
+							<outputDir>${project.basedir}/target/generated-source</outputDir>
+							<sourceDirs>
+								<sourceDir>${project.basedir}/src/main/java</sourceDir>
+							</sourceDirs>
+						</configuration>
+						<goals>
+							<goal>generate-dto</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.charpy.jdto</groupId>
+			<artifactId>jdto-maven-plugin</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>3.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.charpy.jdto</groupId>
 			<artifactId>jdto-core</artifactId>

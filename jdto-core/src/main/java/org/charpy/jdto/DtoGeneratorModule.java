@@ -18,11 +18,13 @@ import com.thoughtworks.qdox.model.JavaSource;
 
 public class DtoGeneratorModule {
 
+	// JCodeModel to generate the output source code
 	private JCodeModel jcodeModel;
+	private String generationToken = "DTO";
+	private TokenPosition tokenPosition = TokenPosition.POSTFIX;
 
 	public DtoGeneratorModule() throws Exception {
 		jcodeModel = new JCodeModel();
-
 	}
 
 	public void process(File sourceFolder, File outputFolder) throws ClassNotFoundException, JClassAlreadyExistsException, IOException {
@@ -38,7 +40,6 @@ public class DtoGeneratorModule {
 				System.out.println("pkg name : " + name);
 				System.out.println("pkg to String : " + toString);
 			}
-
 		}
 		outputFolder.mkdirs();
 		jcodeModel.build(outputFolder);
@@ -60,12 +61,18 @@ public class DtoGeneratorModule {
 			for (JavaField field : jc.getFields()) {
 				if (getAnnotationFromField(DtoField.class, field) != null) {
 					if (writer == null)
-						writer = new DtoWriter(jcodeModel, jc.getName() + "DTO");
+						if (tokenPosition == TokenPosition.POSTFIX) {
+							writer = new DtoWriter(jcodeModel, jc.getName() + generationToken);
+						} else {
+							writer = new DtoWriter(jcodeModel, generationToken + jc.getName());
+						}
 					try {
 						// this throws exception if its a primitive
-						writer.addField(JType.parse(jcodeModel, field.getType().getFullyQualifiedName()), field.getName(), true, true);
+						//writer.addField(JType.parse(jcodeModel, field.getType().getGenericFullyQualifiedName()), field.getName(), true, true);
+						
+						writer.addField(jcodeModel.parseType(field.getType().getGenericFullyQualifiedName()),  field.getName(), true, true);
 					} catch (IllegalArgumentException e) {
-						writer.addField(Class.forName(field.getType().getFullyQualifiedName()), field.getName(), true, true);
+						writer.addField(Class.forName(field.getType().getGenericFullyQualifiedName()), field.getName(), true, true);
 					}
 				}
 			}

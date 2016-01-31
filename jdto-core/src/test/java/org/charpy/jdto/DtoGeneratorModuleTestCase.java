@@ -80,7 +80,7 @@ public class DtoGeneratorModuleTestCase {
 	}
 	
 
-	public void listFilesForFolder(final File folder) throws IOException {
+	public void listFilesForFolder(final File folder) throws IOException { 
 		for (final File fileEntry : folder.listFiles()) {
 			if (fileEntry.isDirectory()) {
 				listFilesForFolder(fileEntry);
