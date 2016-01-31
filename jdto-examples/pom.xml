@@ -4,5 +4,13 @@
 	<groupId>org.charpy.jdto</groupId>
 	<artifactId>jdto-examples</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>jDTO</name>
+	<name>jDTO - Examples</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.charpy.jdto</groupId>
+			<artifactId>jdto-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>
