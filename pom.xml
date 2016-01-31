@@ -10,5 +10,6 @@
 		<module>jdto-core</module>
 		<module>jdto-maven-plugin</module>
 		<module>jdto-examples</module>
+		<module>jdto-annotations</module>
 	</modules>
 </project>

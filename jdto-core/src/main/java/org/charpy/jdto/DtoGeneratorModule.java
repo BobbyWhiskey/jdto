@@ -8,7 +8,7 @@ import org.charpy.jdto.annotations.GenerateDto;
 
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JType;
+
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -27,6 +27,14 @@ public class DtoGeneratorModule {
 		jcodeModel = new JCodeModel();
 	}
 
+	/**
+	 * Process all the java files recursively and generate the output source files in the output folder specified
+	 * @param sourceFolder
+	 * @param outputFolder
+	 * @throws ClassNotFoundException
+	 * @throws JClassAlreadyExistsException
+	 * @throws IOException
+	 */
 	public void process(File sourceFolder, File outputFolder) throws ClassNotFoundException, JClassAlreadyExistsException, IOException {
 		JavaProjectBuilder builder = new JavaProjectBuilder();
 		builder.addSourceTree(sourceFolder);
@@ -45,35 +53,28 @@ public class DtoGeneratorModule {
 		jcodeModel.build(outputFolder);
 	}
 
-	public JavaAnnotation getAnnotationFromClass(Class<?> ja, JavaClass jc) {
-		for (JavaAnnotation annotation : jc.getAnnotations()) {
-			if (annotation.getType().getFullyQualifiedName().equals(ja.getName())) {
-				return annotation;
-			}
-		}
-		return null;
-	}
-
+	/**
+	 * Process a source java class and generate the output DTO file 
+	 * @param jc
+	 * @param outputFolder
+	 * @throws JClassAlreadyExistsException
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public void processJavaClass(JavaClass jc, File outputFolder) throws JClassAlreadyExistsException, ClassNotFoundException, IOException {
 		JavaAnnotation classAnnotation = getAnnotationFromClass(GenerateDto.class, jc);
 		if (classAnnotation != null) {
 			DtoWriter writer = null;
 			for (JavaField field : jc.getFields()) {
 				if (getAnnotationFromField(DtoField.class, field) != null) {
-					if (writer == null)
+					if (writer == null) {
 						if (tokenPosition == TokenPosition.POSTFIX) {
 							writer = new DtoWriter(jcodeModel, jc.getName() + generationToken);
 						} else {
 							writer = new DtoWriter(jcodeModel, generationToken + jc.getName());
 						}
-					try {
-						// this throws exception if its a primitive
-						//writer.addField(JType.parse(jcodeModel, field.getType().getGenericFullyQualifiedName()), field.getName(), true, true);
-						
-						writer.addField(jcodeModel.parseType(field.getType().getGenericFullyQualifiedName()),  field.getName(), true, true);
-					} catch (IllegalArgumentException e) {
-						writer.addField(Class.forName(field.getType().getGenericFullyQualifiedName()), field.getName(), true, true);
 					}
+					writer.addField(jcodeModel.parseType(field.getType().getGenericFullyQualifiedName()), field.getName(), true, true);
 				}
 			}
 			if (writer != null) {
@@ -82,6 +83,16 @@ public class DtoGeneratorModule {
 		}
 	}
 
+	private JavaAnnotation getAnnotationFromClass(Class<?> ja, JavaClass jc) {
+		for (JavaAnnotation annotation : jc.getAnnotations()) {
+			if (annotation.getType().getFullyQualifiedName().equals(ja.getName())) {
+				return annotation;
+			}
+		}
+		return null;
+	}
+
+	
 	private Object getAnnotationFromField(Class<?> class1, JavaField jc) {
 		for (JavaAnnotation annotation : jc.getAnnotations()) {
 			if (annotation.getType().getFullyQualifiedName().equals(class1.getName())) {
