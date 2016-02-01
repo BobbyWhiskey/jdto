@@ -3,15 +3,14 @@ package org.charpy.jdto;
 import java.io.File;
 import java.io.IOException;
 
-import com.sun.codemodel.JAnnotationUse;
+import org.apache.commons.lang3.StringUtils;
+
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JType;
-import com.thoughtworks.qdox.model.JavaType;
 
 public class DtoWriter {
 
@@ -27,13 +26,12 @@ public class DtoWriter {
 		JFieldVar field = dc.field(1, javaType, name);
 
 		if (getter) {
-			// TODO capitalizeName
-			JMethod m = dc.method(0, javaType, "get" + name);
+			JMethod m = dc.method(0, javaType, "get" + StringUtils.capitalize(name));
 			m.body()._return(field);
 		}
 
 		if (setter) {
-			JMethod m = dc.method(0, javaType, "set" + name);
+			JMethod m = dc.method(0, javaType, "set" + StringUtils.capitalize(name));
 			// Set the param
 			m.param(javaType, name);
 
