@@ -2,8 +2,6 @@ package org.charpy.jdto.dto;
 
 import java.sql.Date;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.charpy.jdto.annotations.DtoField;
@@ -37,7 +35,7 @@ public class ExampleObject {
 	 */
 	@IncludeMethodToDTO
 	public void sortStringList() throws NullPointerException {
-		Collections.sort(listOfStrings);
+		java.util.Collections.sort(listOfStrings);
 	}
 
 	/**
@@ -47,7 +45,7 @@ public class ExampleObject {
 	 */
 	@IncludeMethodToDTO
 	public void sortListOfInts() throws NullPointerException {
-		Collections.sort(listOfStrings);
+		java.util.Collections.sort(listOfStrings);
 	}
 
 }

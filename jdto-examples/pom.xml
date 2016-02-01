@@ -24,6 +24,7 @@
 							<sourceDirs>
 								<sourceDir>${project.basedir}/src/main/java</sourceDir>
 							</sourceDirs>
+							<outputPackage>org.charpy.jdto.generated</outputPackage>
 						</configuration>
 						<goals>
 							<goal>generate-dto</goal>

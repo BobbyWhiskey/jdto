@@ -33,21 +33,30 @@ public class JDtoPlugin extends AbstractMojo {
 	/**
 	 * @parameter
 	 */
-	private TokenPosition tokenPosition;
+	TokenPosition tokenPosition;
+
+	/**
+	 * @parameter
+	 */
+	String outputPackage;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		
 		System.out.println("output dir" + outputDir);
 		// TODO Add some validation for params 
 		for (String src : sourceDirs) {
 			try {
 				DtoGeneratorModule module = new DtoGeneratorModule();
-				module.process(new File(src), new File(outputDir));
+
+				if (generationToken != null)
+					module.setGenerationToken(generationToken);
+				if (tokenPosition != null)
+					module.setTokenPosition(tokenPosition);
+
+				module.process(new File(src), new File(outputDir), outputPackage);
 			} catch (Exception e) {
-				throw new MojoExecutionException("Execution error" , e);
+				throw new MojoExecutionException("Execution error", e);
 			}
 		}
-
 	}
 
 }

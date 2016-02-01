@@ -20,12 +20,16 @@ import com.thoughtworks.qdox.model.JavaPackage;
 import com.thoughtworks.qdox.model.JavaSource;
 import com.thoughtworks.qdox.model.impl.AbstractJavaEntity;
 
+/**
+ * Module that process code and generate DTO
+ */
 public class DtoGeneratorModule {
 
 	// JCodeModel to generate the output source code
 	private JCodeModel jcodeModel;
 	private String generationToken = "DTO";
 	private TokenPosition tokenPosition = TokenPosition.POSTFIX;
+	private String outputPackage;
 
 	public DtoGeneratorModule() throws Exception {
 		jcodeModel = new JCodeModel();
@@ -39,10 +43,10 @@ public class DtoGeneratorModule {
 	 * @throws JClassAlreadyExistsException
 	 * @throws IOException
 	 */
-	public void process(File sourceFolder, File outputFolder) throws ClassNotFoundException, JClassAlreadyExistsException, IOException {
+	public void process(File sourceFolder, File outputFolder, String outputPackage) throws ClassNotFoundException, JClassAlreadyExistsException, IOException {
 		JavaProjectBuilder builder = new JavaProjectBuilder();
 		builder.addSourceTree(sourceFolder);
-
+		this.outputPackage = outputPackage;
 		for (JavaSource js : builder.getSources()) {
 			for (JavaClass javaClass : js.getClasses()) {
 				processJavaClass(javaClass, outputFolder);
@@ -63,7 +67,7 @@ public class DtoGeneratorModule {
 	public void processJavaClass(JavaClass jc, File outputFolder) throws JClassAlreadyExistsException, ClassNotFoundException, IOException {
 		JavaAnnotation classAnnotation = getAnnotationFromEntity(GenerateDto.class, jc);
 		if (classAnnotation != null) {
-			
+
 			// Iterate over fields and generate getter/setter for those with annotation DtoField
 			DtoWriter writer = null;
 			for (JavaField field : jc.getFields()) {
@@ -71,9 +75,9 @@ public class DtoGeneratorModule {
 				if (fieldAnno != null) {
 					if (writer == null) {
 						if (tokenPosition == TokenPosition.POSTFIX) {
-							writer = new DtoWriter(jcodeModel, jc.getName() + generationToken);
+							writer = new DtoWriter(jcodeModel, outputPackage + "." + jc.getName() + generationToken);
 						} else {
-							writer = new DtoWriter(jcodeModel, generationToken + jc.getName());
+							writer = new DtoWriter(jcodeModel, outputPackage + "." + generationToken + jc.getName());
 						}
 					}
 
@@ -83,7 +87,7 @@ public class DtoGeneratorModule {
 					Object setterObj = fieldAnno.getNamedParameter("setter");
 					if (setterObj != null)
 						setter = new Boolean(fieldAnno.getNamedParameter("setter").toString());
-					
+
 					Object getterObj = fieldAnno.getNamedParameter("getter");
 					if (getterObj != null)
 						getter = new Boolean(fieldAnno.getNamedParameter("getter").toString());
@@ -91,15 +95,15 @@ public class DtoGeneratorModule {
 					writer.addField(jcodeModel.parseType(field.getType().getGenericFullyQualifiedName()), field.getName(), getter, setter);
 				}
 			}
-			
+
 			// Lets see which method need to be included
-			for(JavaMethod m : jc.getMethods()){
+			for (JavaMethod m : jc.getMethods()) {
 				JavaAnnotation methodAnno = getAnnotationFromEntity(IncludeMethodToDTO.class, m);
-				if(methodAnno != null){
+				if (methodAnno != null) {
 					writer.addMethod(m);
 				}
 			}
-			
+
 			// Write dto to disk
 			if (writer != null) {
 				writer.build(outputFolder);
@@ -114,6 +118,14 @@ public class DtoGeneratorModule {
 			}
 		}
 		return null;
+	}
+
+	public void setGenerationToken(String generationToken) {
+		this.generationToken = generationToken;
+	}
+
+	public void setTokenPosition(TokenPosition tokenPosition) {
+		this.tokenPosition = tokenPosition;
 	}
 
 }
