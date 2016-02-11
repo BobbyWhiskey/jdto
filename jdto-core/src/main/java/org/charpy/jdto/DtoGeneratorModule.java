@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.charpy.jdto.annotations.DtoField;
 import org.charpy.jdto.annotations.GenerateDto;
 import org.charpy.jdto.annotations.IncludeMethodToDTO;
+import org.charpy.jdto.annotations.MethodAccessModifier;
 
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
@@ -38,7 +39,7 @@ public class DtoGeneratorModule {
 	 * Process all the java files recursively and generate the output source files in the output folder specified
 	 * @param sourceFolder
 	 * @param outputFolder
-         * @param outputPackage
+	     * @param outputPackage
 	 * @throws ClassNotFoundException
 	 * @throws JClassAlreadyExistsException
 	 * @throws IOException
@@ -72,9 +73,9 @@ public class DtoGeneratorModule {
 			DtoWriter writer = null;
 			for (JavaField field : jc.getFields()) {
 				JavaAnnotation fieldAnno = getAnnotationFromEntity(DtoField.class, field);
-                                
-                                if (fieldAnno != null) {
-                                    //TODO FIX ME - What happens if there are no fields but there are annotated methods??
+
+				if (fieldAnno != null) {
+					//TODO FIX ME - What happens if there are no fields but there are annotated methods??
 					if (writer == null) {
 						if (tokenPosition == TokenPosition.POSTFIX) {
 							writer = new DtoWriter(jcodeModel, outputPackage + "." + jc.getName() + generationToken);
@@ -84,45 +85,46 @@ public class DtoGeneratorModule {
 					}
 
 					boolean getter = true;
-                                        int getterModifier = JMod.PUBLIC;
-                                        boolean setter = true;
-                                        int setterModifier = JMod.PUBLIC;
-                                        int fieldModifier = JMod.PRIVATE;
-                                        
-                                        Object fieldModifierObj = fieldAnno.getNamedParameter("modifier");
+					MethodAccessModifier getterModifier = MethodAccessModifier.Public;
+					boolean setter = true;
+					MethodAccessModifier setterModifier = MethodAccessModifier.Public;
+					MethodAccessModifier fieldModifier = MethodAccessModifier.Private;
+
+					Object fieldModifierObj = fieldAnno.getNamedParameter("fieldModifier");
 					if (fieldModifierObj != null)
-						fieldModifier = Integer.parseInt(fieldModifierObj.toString());
-                                        
-                                        //Getting getter
-                                        Object getterObj = fieldAnno.getNamedParameter("getter");
+						fieldModifier = MethodAccessModifier.fromQDoxAnnotationString(fieldModifierObj.toString());
+
+					//Getting getter
+					Object getterObj = fieldAnno.getNamedParameter("getter");
 					if (getterObj != null)
 						getter = Boolean.parseBoolean(getterObj.toString());
-                                        
-                                        //Getting getter modifier
-                                        Object getterModifierObj = fieldAnno.getNamedParameter("getterModifier");
+
+					//Getting getter modifier
+					Object getterModifierObj = fieldAnno.getNamedParameter("getterModifier");
 					if (getterModifierObj != null)
-						getterModifier = Integer.parseInt(getterModifierObj.toString());
-                                        
-                                        //Getting setter
-                                        Object setterObj = fieldAnno.getNamedParameter("setter");
+						getterModifier =  MethodAccessModifier.fromQDoxAnnotationString(getterModifierObj.toString());
+
+					//Getting setter
+					Object setterObj = fieldAnno.getNamedParameter("setter");
 					if (setterObj != null)
 						setter = Boolean.parseBoolean(setterObj.toString());
-                                        
-                                        //Getting setter modifier
-                                        Object setterModifierObj = fieldAnno.getNamedParameter("setterModifier");
-					if (setterModifierObj != null)
-						setterModifier = new Integer(setterModifierObj.toString());
 
-					writer.addField(jcodeModel.parseType(field.getType().getGenericFullyQualifiedName()), field.getName(), fieldModifier, getter, getterModifier, setter, setterModifier);
+					//Getting setter modifier
+					Object setterModifierObj = fieldAnno.getNamedParameter("setterModifier");
+					if (setterModifierObj != null)
+						setterModifier =  MethodAccessModifier.fromQDoxAnnotationString(setterModifierObj.toString());
+
+					writer.addField(jcodeModel.parseType(field.getType().getGenericFullyQualifiedName()), field.getName(), fieldModifier.getJModConstant(), getter, getterModifier.getJModConstant(), setter, setterModifier.getJModConstant());
 				}
 			}
 
 			// Lets see which method need to be included
-                        //TODO FIX ME - It would get NullPointerException if there are no fields
-			for (JavaMethod m : jc.getMethods()) {
-				JavaAnnotation methodAnno = getAnnotationFromEntity(IncludeMethodToDTO.class, m);
-				if (methodAnno != null) {
-					writer.addMethod(m);
+			if (jc.getMethods() != null && !jc.getMethods().isEmpty()) {
+				for (JavaMethod m : jc.getMethods()) {
+					JavaAnnotation methodAnno = getAnnotationFromEntity(IncludeMethodToDTO.class, m);
+					if (methodAnno != null) {
+						writer.addMethod(m);
+					}
 				}
 			}
 

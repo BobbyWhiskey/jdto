@@ -1,6 +1,5 @@
 package org.charpy.jdto.annotations;
 
-import com.sun.codemodel.JMod;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,7 +22,7 @@ public @interface DtoField {
      * Instance member getter access modifier
      * @return - public by default
      */
-    int getterModifier() default JMod.PUBLIC;
+    MethodAccessModifier getterModifier() default MethodAccessModifier.Public;
 
     /**
      * Should generate setter method?
@@ -35,13 +34,13 @@ public @interface DtoField {
      * Instance member setter access modifier
      * @return - public by default
      */
-    int setterModifier() default JMod.PUBLIC;
+    MethodAccessModifier setterModifier() default MethodAccessModifier.Public;
     
     /**
      * Instance member access modifier
      * @return - private by default
      */
-    int modifier() default JMod.PRIVATE;
+    MethodAccessModifier fieldModifier() default MethodAccessModifier.Private;
 
     
 }
