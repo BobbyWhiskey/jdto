@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
@@ -29,16 +28,16 @@ public class DtoWriter {
 		
 	}
 
-	public void addField(JType javaType, String name, boolean getter, boolean setter) {
-		JFieldVar field = dc.field(1, javaType, name);
+	public void addField(JType javaType, String name, int fieldModifier, boolean getter, int getterModifier, boolean setter, int setterModifier) {
+		JFieldVar field = dc.field(fieldModifier, javaType, name);
 
 		if (getter) {
-			JMethod m = dc.method(0, javaType, "get" + StringUtils.capitalize(name) );
+			JMethod m = dc.method(getterModifier, javaType, "get" + StringUtils.capitalize(name) );
 			m.body()._return(field);
 		}
 
 		if (setter) {
-			JMethod m = dc.method(0, javaType, "set" + StringUtils.capitalize(name) );
+			JMethod m = dc.method(setterModifier, void.class, "set" + StringUtils.capitalize(name) );
 			// Set the param
 			m.param(javaType, name);
 
