@@ -17,10 +17,7 @@ import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
-import com.thoughtworks.qdox.model.JavaPackage;
 import com.thoughtworks.qdox.model.JavaSource;
-import com.thoughtworks.qdox.model.expression.AnnotationValue;
-import com.thoughtworks.qdox.model.impl.AbstractJavaEntity;
 
 /**
  * Module that process code and generate DTO
@@ -28,7 +25,7 @@ import com.thoughtworks.qdox.model.impl.AbstractJavaEntity;
 public class DtoGeneratorModule {
 
 	// JCodeModel to generate the output source code
-	private JCodeModel jcodeModel;
+	private final JCodeModel jcodeModel;
 	private String generationToken = "DTO";
 	private TokenPosition tokenPosition = TokenPosition.POSTFIX;
 	private String outputPackage;
@@ -41,6 +38,7 @@ public class DtoGeneratorModule {
 	 * Process all the java files recursively and generate the output source files in the output folder specified
 	 * @param sourceFolder
 	 * @param outputFolder
+         * @param outputPackage
 	 * @throws ClassNotFoundException
 	 * @throws JClassAlreadyExistsException
 	 * @throws IOException
@@ -76,6 +74,7 @@ public class DtoGeneratorModule {
 				JavaAnnotation fieldAnno = getAnnotationFromEntity(DtoField.class, field);
                                 
                                 if (fieldAnno != null) {
+                                    //TODO FIX ME - What happens if there are no fields but there are annotated methods??
 					if (writer == null) {
 						if (tokenPosition == TokenPosition.POSTFIX) {
 							writer = new DtoWriter(jcodeModel, outputPackage + "." + jc.getName() + generationToken);
@@ -119,6 +118,7 @@ public class DtoGeneratorModule {
 			}
 
 			// Lets see which method need to be included
+                        //TODO FIX ME - It would get NullPointerException if there are no fields
 			for (JavaMethod m : jc.getMethods()) {
 				JavaAnnotation methodAnno = getAnnotationFromEntity(IncludeMethodToDTO.class, m);
 				if (methodAnno != null) {

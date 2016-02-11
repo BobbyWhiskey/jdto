@@ -1,11 +1,17 @@
 package org.charpy.jdto.annotations;
 
 import com.sun.codemodel.JMod;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Generate this field in the DTO
  *
  */
+@Target(value = {ElementType.FIELD})
+@Retention(value = RetentionPolicy.SOURCE)
 public @interface DtoField {
     /**
      * Should generate getter method?
