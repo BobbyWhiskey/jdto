@@ -9,7 +9,7 @@ import org.charpy.jdto.annotations.MethodAccessModifier;
 
 @GenerateDto
 public class TestClass1 {
- 
+/*
 	@DtoField(getter = false, setter = false, fieldModifier = MethodAccessModifier.Public)
 	int leet;
 
@@ -18,10 +18,17 @@ public class TestClass1 {
 
 	@DtoField
 	Date when;
+*/
+	@DtoField
+	InnerEnum innerEnum;
 
 	@IncludeMethodToDTO
 	public boolean testMethod(Date date, String string) throws NullPointerException {
 		System.out.println("method called");
 		return true;
+	}
+
+	public static enum InnerEnum {
+		VALUE1, VALUE2;
 	}
 }

@@ -114,7 +114,7 @@ public class DtoGeneratorModule {
 					if (setterModifierObj != null)
 						setterModifier =  MethodAccessModifier.fromQDoxAnnotationString(setterModifierObj.toString());
 
-					writer.addField(jcodeModel.parseType(field.getType().getGenericFullyQualifiedName()), field.getName(), fieldModifier.getJModConstant(), getter, getterModifier.getJModConstant(), setter, setterModifier.getJModConstant());
+					writer.addField(jcodeModel.parseType(field.getType().getGenericCanonicalName()), field.getName(), fieldModifier.getJModConstant(), getter, getterModifier.getJModConstant(), setter, setterModifier.getJModConstant());
 				}
 			}
 

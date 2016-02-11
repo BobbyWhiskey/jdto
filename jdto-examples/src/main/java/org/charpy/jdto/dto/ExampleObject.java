@@ -26,6 +26,13 @@ public class ExampleObject {
 
 	@DtoField
 	private Collection<Date> listOfDates;
+	
+	@DtoField
+	InnerEnum innerEnum;
+
+	public static enum InnerEnum {
+		VALUE1, VALUE2;
+	}
 
 	/**
 	 * Example of a utility method that could be included in the DTO.
