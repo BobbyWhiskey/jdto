@@ -11,10 +11,12 @@ import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
+import com.sun.codemodel.JMod;
 import com.sun.codemodel.JType;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
+import java.lang.reflect.Modifier;
 
 public class DtoWriter {
 
@@ -29,16 +31,16 @@ public class DtoWriter {
 		
 	}
 
-	public void addField(JType javaType, String name, boolean getter, boolean setter) {
-		JFieldVar field = dc.field(1, javaType, name);
+	public void addField(JType javaType, String name, int fieldModifier, boolean getter, int getterModifier, boolean setter, int setterModifier) {
+		JFieldVar field = dc.field(fieldModifier, javaType, name);
 
 		if (getter) {
-			JMethod m = dc.method(0, javaType, "get" + StringUtils.capitalize(name) );
+			JMethod m = dc.method(getterModifier, javaType, "get" + StringUtils.capitalize(name) );
 			m.body()._return(field);
 		}
 
 		if (setter) {
-			JMethod m = dc.method(0, javaType, "set" + StringUtils.capitalize(name) );
+			JMethod m = dc.method(setterModifier, void.class, "set" + StringUtils.capitalize(name) );
 			// Set the param
 			m.param(javaType, name);
 
